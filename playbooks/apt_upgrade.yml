@@ -1,6 +1,6 @@
 ---
 - name: Upgrade packages via apt
-  hosts: cloud_vms
+  hosts: all
   become: yes
   tasks:
   - name: Update the apt cache
