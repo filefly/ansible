@@ -1,0 +1,31 @@
+---
+- name: Update all VMs
+  hosts: local_vms
+  remote_user: ansible
+  vars:
+    ansible_ssh_common_args: -o StrictHostKeyChecking=no
+    ansible_python_interpreter: auto_silent
+
+  tasks:
+  - name: Ensure users exist
+    become: true
+    ansible.builtin.user:
+      name: filefly
+      state: present
+      shell: "/bin/bash"
+      password: "$6$9yj1yQN0dQqsqB5/$1H24C.c/RCvktZUzKXjlyHjMp3psGViW5nz7W1A6cfoR3QV.3MZ9MpEeQLw0NruKheB8.wbMf0ZxCYwQbOkKy0"
+
+  - name: Set authorized_keys
+    become: true
+    ansible.posix.authorized_key:
+      user: filefly
+      state: present
+      key: "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAoN2/sCOKdlPOJllR+mXQgL/fBNrLPtrx2ITUElOmyfLAYOOjuH2jmW/BSYwVf0oE8kEPUi0y4I+tL8UM3cZvcOeCeZsx9fQUTf9Ly4/te49ZX7c9w7iZKMfMayec8RGpFRQareFoCety9B7kuX7oi6p5cCRisJcHxvjqQwlGpyQQnrdFlntUA1wqo83MtL1BdEqYLO8AncdjDw7xtVL4mn6c3H3oiPIOxyYxWS9wXovj1jalqZG6URzJF5Qdv92/Gvk4RL3vUS4rOIwpuxKJI4G9tcx96dgpEh4Z9JTz1X0UVZ+t2fcNjPD8fU2A/SFWiX0eWwc6zYzYOdHeYN0niw== filefly"
+
+  - name: Ensure qemu-guest-agent is up to date
+    become: true
+    ansible.builtin.apt:
+      name: qemu-guest-agent
+      state: latest
+      update_cache: true
+      
